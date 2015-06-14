@@ -1,0 +1,17 @@
+{
+  "GitRepos": {
+    "vendor/src/github.com/gizak/termui": {
+      "URI": "https://github.com/gizak/termui",
+      "Ref": "9d0302382ddeed86cbedb11049dcab10f8131d15"
+    },
+    "vendor/src/github.com/mattn/go-runewidth": {
+      "URI": "https://github.com/mattn/go-runewidth",
+      "Ref": "5890272cd41c5103531cd7b79e428d99c9e97f76"
+    },
+    "vendor/src/github.com/nsf/termbox-go": {
+      "URI": "https://github.com/nsf/termbox-go",
+      "Ref": "598cdb8b3c49430c1c91604805461732064bde1d"
+    }
+  },
+  "MercurialRepos": {}
+}

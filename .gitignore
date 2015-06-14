@@ -1,0 +1,6 @@
+bin
+pkg
+vendor/bin
+vendor/pkg
+primus.sublime-workspace
+tmp
