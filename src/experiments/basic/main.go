@@ -20,8 +20,8 @@ func makeLog() *log.Logger {
 type ViewBlock struct {
 	ui.Block
 
-	VerticalOffset   int
-	HorizontalOffset int
+	CenterX int
+	CenterY int
 
 	WorldWidth  int
 	WorldHeight int
@@ -48,13 +48,16 @@ func (v *ViewBlock) Buffer() []ui.Point {
 
 	x, y, w, h := v.Block.InnerBounds()
 
+	cdx := x + w/2
+	cdy := y + h/2
+
 	for dx := x; dx <= w; dx++ {
-		wx := dx + v.HorizontalOffset
+		wx := dx + v.CenterX - cdx
 		if wx < 0 || wx > v.WorldWidth {
 			continue
 		}
 		for dy := y; dy <= h; dy++ {
-			wy := dy + v.VerticalOffset
+			wy := dy + v.CenterY - cdy
 			if wy < 0 || wy > v.WorldHeight {
 				continue
 			}
@@ -82,12 +85,12 @@ func main() {
 	b := ui.Block{
 		HasBorder: true,
 		IsDisplay: true,
+		Width:     10,
+		Height:    20,
 	}
 	v := NewViewBlock(b, 20, 20)
-	v.HorizontalOffset = 0
-	v.VerticalOffset = 0
-	v.Width = 10
-	v.Height = 10
+	v.CenterX = 5
+	v.CenterY = 5
 
 	v.World[1][1] = ui.Point{
 		Ch: 'x',
@@ -116,7 +119,9 @@ func main() {
 
 	ui.Render(v)
 	<-ui.EventCh()
-	v.HorizontalOffset += 1
-	ui.Render(v)
-	<-ui.EventCh()
+	for i := 0; i < 5; i++ {
+		v.CenterX += 1
+		ui.Render(v)
+		<-ui.EventCh()
+	}
 }
