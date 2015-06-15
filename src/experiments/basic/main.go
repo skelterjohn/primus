@@ -4,7 +4,9 @@ import (
 	"log"
 	"os"
 
-	ui "github.com/gizak/termui"
+	"github.com/gizak/termui"
+
+	"primus/ui"
 )
 
 var lg = makeLog()
@@ -17,111 +19,43 @@ func makeLog() *log.Logger {
 	return log.New(fout, "", 0)
 }
 
-type ViewBlock struct {
-	ui.Block
-
-	CenterX int
-	CenterY int
-
-	WorldWidth  int
-	WorldHeight int
-	World       [][]ui.Point
-}
-
-func NewViewBlock(b ui.Block, w, h int) *ViewBlock {
-	v := &ViewBlock{
-		Block:       b,
-		WorldWidth:  w,
-		WorldHeight: h,
-	}
-
-	v.World = make([][]ui.Point, w)
-	for x := range v.World {
-		v.World[x] = make([]ui.Point, h)
-	}
-
-	return v
-}
-
-func (v *ViewBlock) Buffer() []ui.Point {
-	ps := v.Block.Buffer()
-
-	x, y, w, h := v.Block.InnerBounds()
-
-	cdx := x + w/2
-	cdy := y + h/2
-
-	for dx := x; dx <= w; dx++ {
-		wx := dx + v.CenterX - cdx
-		if wx < 0 || wx > v.WorldWidth {
-			continue
-		}
-		for dy := y; dy <= h; dy++ {
-			wy := dy + v.CenterY - cdy
-			if wy < 0 || wy > v.WorldHeight {
-				continue
-			}
-			p := v.World[wx][wy]
-			if p.Ch == rune(0) {
-				continue
-			}
-			p.X = dx
-			p.Y = dy
-			ps = append(ps, p)
-		}
-	}
-
-	return ps
-}
-
 func main() {
 
-	err := ui.Init()
-	if err != nil {
-		panic(err)
-	}
+	ui.Init()
 	defer ui.Close()
 
-	b := ui.Block{
-		HasBorder: true,
-		IsDisplay: true,
-		Width:     10,
-		Height:    20,
-	}
-	v := NewViewBlock(b, 20, 20)
-	v.CenterX = 5
-	v.CenterY = 5
+	t := ui.NewT()
 
-	v.World[1][1] = ui.Point{
+	t.View.World[1][1] = termui.Point{
 		Ch: 'x',
-		Fg: ui.ColorRed,
+		Fg: termui.ColorRed,
 	}
-	v.World[2][2] = ui.Point{
+	t.View.World[2][2] = termui.Point{
 		Ch: 'y',
-		Fg: ui.ColorRed,
+		Fg: termui.ColorRed,
 	}
-	v.World[3][5] = ui.Point{
+	t.View.World[3][5] = termui.Point{
 		Ch: 'z',
-		Fg: ui.ColorRed,
+		Fg: termui.ColorRed,
 	}
-	v.World[7][5] = ui.Point{
+	t.View.World[7][5] = termui.Point{
 		Ch: '1',
-		Fg: ui.ColorRed,
+		Fg: termui.ColorRed,
 	}
-	v.World[8][5] = ui.Point{
+	t.View.World[8][5] = termui.Point{
 		Ch: '2',
-		Fg: ui.ColorRed,
+		Fg: termui.ColorRed,
 	}
-	v.World[9][5] = ui.Point{
+	t.View.World[9][5] = termui.Point{
 		Ch: '3',
-		Fg: ui.ColorRed,
+		Fg: termui.ColorRed,
 	}
 
-	ui.Render(v)
-	<-ui.EventCh()
+	t.Render()
+	<-termui.EventCh()
 	for i := 0; i < 5; i++ {
-		v.CenterX += 1
-		ui.Render(v)
-		<-ui.EventCh()
+		t.View.CenterX += 1
+		t.Render()
+		<-termui.EventCh()
 	}
 }
